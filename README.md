@@ -1,5 +1,5 @@
 # 💊 Hospital Manager - Manual do Jogo
-Este é um jogo realizado em Python para a matéria de Sistemas Operacioanais (SO), focando em implementar os conceitos de Threads e Semáforos.
+Este é um jogo realizado em Python para a matéria de Sistemas Operacionais (SO), focando em implementar os conceitos de Threads e Semáforos.
 
 ## Como Jogar
 
