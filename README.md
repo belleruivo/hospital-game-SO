@@ -1,119 +1,129 @@
-# 💊 Hospital Manager - Manual do Jogo
+# 🏥 Hospital Manager - Manual do Jogo
 Este é um jogo realizado em Python para a matéria de Sistemas Operacioanais (SO), focando em implementar os conceitos de Threads e Semáforos.
+
+## Sumário
+1. [Como Jogar](#como-jogar)
+2. [Implementação Técnica](#implementação-técnica)
+3. [Conceitos de SO Demonstrados](#conceitos-de-so-demonstrados)
+4. [Requisitos e Execução](#requisitos-e-execução)
 
 ## Como Jogar
 
-1. **Objetivo do Jogo**
-   - Gerencie um hospital realizando cirurgias
-   - Ganhe dinheiro e mantenha uma boa reputação
-   - Gerencie recursos (médicos, salas, enfermeiros) de forma eficiente
+### Objetivo do Jogo
+- Gerencie um hospital realizando cirurgias
+- Ganhe dinheiro e mantenha uma boa reputação
+- Gerencie recursos (médicos, salas, enfermeiros) de forma eficiente
+- Realize múltiplas cirurgias simultaneamente para maximizar os ganhos
 
-2. **Comandos**
-   - 1: Realizar cirurgia
-   - 2: Contratar médico ($500)
-   - 3: Construir sala cirúrgica ($1000)
-   - 4: Contratar enfermeiro ($300)
-   - 5: Gerar novo paciente
-   - 6: Ver estatísticas
-   - 7: Sair do jogo
+### Comandos
+1. Realizar cirurgia
+2. Contratar médico ($500)
+3. Construir sala cirúrgica ($1000)
+4. Contratar enfermeiro ($300)
+5. Gerar novo paciente
+6. Ver estatísticas detalhadas
+7. Sair do jogo
 
-3. **Dicas**
-   - Mantenha recursos suficientes para realizar cirurgias
-   - Priorize pacientes com maior urgência
-   - Equilibre gastos com contratações e ganhos das cirurgias
+### Cirurgias Simultâneas
+Para realizar cirurgias ao mesmo tempo:
+- Certifique-se de ter recursos suficientes
+  * Cada cirurgia requer: 1 sala, 1 médico e 1 enfermeiro
+- Inicie uma cirurgia (opção 1)
+- Sem esperar ela terminar, inicie outra cirurgia (opção 1 novamente)
+- Você pode continuar gerenciando o hospital enquanto as cirurgias acontecem
 
-## Implementação dos Conceitos de SO
+### Dicas
+- Mantenha recursos suficientes para realizar múltiplas cirurgias
+- Contrate mais recursos quando necessário
+- Priorize pacientes com maior urgência
+- Equilibre gastos com contratações e ganhos das cirurgias
+- Monitore os recursos disponíveis antes de iniciar novas cirurgias
 
-### 1. Threads (Processos Paralelos)
+## Implementação Técnica
 
-No jogo, as threads são utilizadas para simular operações simultâneas no hospital:
+### Threads no Projeto
+- **Onde:** Cada cirurgia roda em uma thread separada
+- **Como:** Usando `threading.Thread(target=self.realizar_cirurgia, args=(paciente,))`
+- **Por que:** Permite que múltiplas cirurgias aconteçam simultaneamente, simulando um hospital real
+- **Implementação:**
+  ```python
+  def iniciar_cirurgia(self, paciente):
+      thread = threading.Thread(target=self.realizar_cirurgia, args=(paciente,))
+      thread.start()
+      return thread
+  ```
 
-1. **Cirurgias Simultâneas**
-   ```python
-   threading.Thread(target=self.realizar_cirurgia, args=(paciente,)).start()
-   ```
-   - Cada cirurgia roda em sua própria thread
-   - Permite realizar múltiplas cirurgias ao mesmo tempo
-   - Simula o paralelismo real de um hospital
-
-2. **Por que usar Threads?**
-   - Permite operações simultâneas
-   - Simula um ambiente real de hospital
-   - Demonstra concorrência por recursos
-
-### 2. Semáforos (Controle de Recursos)
-
-Os semáforos são utilizados para controlar recursos limitados do hospital:
-
-1. **Recursos Controlados**
-   ```python
-   self.salas_cirurgicas = Semaphore(2)  # 2 salas
-   self.medicos = Semaphore(3)           # 3 médicos
-   self.enfermeiros = Semaphore(4)       # 4 enfermeiros
-   ```
-
-2. **Como funcionam**
-   - `acquire()`: Reserva um recurso
-   - `release()`: Libera um recurso
-   - Se não há recursos disponíveis, a thread espera
-
-3. **Por que usar Semáforos?**
-   - Evita sobreutilização de recursos
-   - Garante que cada recurso só é usado por uma cirurgia por vez
-   - Simula limitações reais de um hospital
-
-### 3. Sincronização
-
-1. **Locks para Recursos Compartilhados**
-   ```python
-   self.recursos_lock = threading.Lock()
-   ```
-   - Protege variáveis compartilhadas (dinheiro, reputação)
-   - Evita condições de corrida
-   - Garante consistência dos dados
-
-## Pontos de Implementação no Código
-
-### Threads
-- Cada cirurgia é uma thread independente
-- Permite paralelismo real
-- Demonstra concorrência por recursos
-
-### Semáforos
-- Controlam acesso a recursos limitados
-- Implementam exclusão mútua
-- Previnem deadlocks
+### Semáforos no Projeto
+- **Onde:** Controle de recursos limitados (salas, médicos, enfermeiros)
+- **Como:** Usando `threading.Semaphore(quantidade)`
+- **Por que:** Garante que não ultrapassamos o limite de recursos disponíveis
+- **Implementação:**
+  ```python
+  self.salas_cirurgicas = Semaphore(2)  # 2 salas
+  self.medicos = Semaphore(3)           # 3 médicos
+  self.enfermeiros = Semaphore(4)       # 4 enfermeiros
+  ```
 
 ### Exemplo de Fluxo
 1. Usuário inicia cirurgia
-2. Thread é criada
-3. Recursos são reservados via semáforos
-4. Cirurgia é realizada
-5. Recursos são liberados
+2. Nova thread é criada
+3. Thread tenta adquirir recursos via semáforos
+4. Se conseguir recursos, realiza a cirurgia
+5. Ao terminar, libera os recursos
+6. Outras threads podem usar os recursos liberados
+
+### Prevenção de Deadlocks
+- Recursos são sempre adquiridos na mesma ordem
+- Lock protege recursos compartilhados
+- Verificação prévia de recursos disponíveis
 
 ## Conceitos de SO Demonstrados
 
-1. **Concorrência**
-   - Múltiplas cirurgias simultâneas
-   - Competição por recursos
+### 1. Concorrência
+- Múltiplas cirurgias simultâneas
+- Competição por recursos limitados
+- Threads independentes
 
-2. **Sincronização**
-   - Uso de semáforos
-   - Proteção de recursos compartilhados
+### 2. Sincronização
+- Uso de semáforos para controle de recursos
+- Lock para proteção de variáveis compartilhadas
+- Coordenação entre threads
 
-3. **Gerenciamento de Recursos**
-   - Alocação controlada
-   - Prevenção de deadlocks
+### 3. Gerenciamento de Recursos
+- Alocação controlada via semáforos
+- Prevenção de deadlocks
+- Liberação adequada de recursos
 
-4. **Exclusão Mútua**
-   - Recursos não podem ser usados simultaneamente
-   - Garante consistência das operações
+### 4. Exclusão Mútua
+- Recursos não podem ser usados simultaneamente
+- Proteção de regiões críticas
+- Garantia de consistência
 
-## Requisitos Técnicos
+## Requisitos e Execução
+
+### Requisitos Técnicos
 - Python 3.6 ou superior
 - Nenhuma biblioteca externa necessária
 
-## Como Executar
+### Como Executar
    ```python
    python main.py
    ```
+
+### Estrutura do Projeto
+- `main.py`: Arquivo principal do jogo
+- `hospital_game.py`: Implementação da lógica do jogo
+- `README.md`: Documentação e manual
+
+### Observações Importantes
+1. O jogo utiliza threads reais do sistema operacional
+2. Os semáforos garantem o uso seguro dos recursos
+3. A interface é atualizada em tempo real
+4. O sistema previne deadlocks e race conditions
+
+## Contribuição
+
+Este projeto foi desenvolvido para demonstrar conceitos de Sistemas Operacionais, especificamente:
+- Threads e processamento paralelo
+- Semáforos e controle de recursos
+- Sincronização e exclusão mútua
