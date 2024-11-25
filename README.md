@@ -114,3 +114,6 @@ Os semáforos são utilizados para controlar recursos limitados do hospital:
 - Nenhuma biblioteca externa necessária
 
 ## Como Executar
+   ```python
+   python main.py
+   ```
