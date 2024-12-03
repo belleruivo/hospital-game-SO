@@ -154,7 +154,7 @@ class HospitalGame:
         with self.recursos_lock:
             if self.dinheiro >= 500:
                 self.dinheiro -= 500
-                self.medicos = Semaphore(self.medicos._value + 1)
+                self.medicos = Semaphore(self.medicos._value + 1) # !!!!
                 print("\n✅ Médico contratado!")
             else:
                 print("\n❌ Dinheiro insuficiente!")
@@ -164,7 +164,7 @@ class HospitalGame:
         with self.recursos_lock:
             if self.dinheiro >= 1000:
                 self.dinheiro -= 1000
-                self.salas_cirurgicas = Semaphore(self.salas_cirurgicas._value + 1)
+                self.salas_cirurgicas = Semaphore(self.salas_cirurgicas._value + 1) # !!!!
                 print("\n✅ Sala construída!")
             else:
                 print("\n❌ Dinheiro insuficiente!")
@@ -174,7 +174,7 @@ class HospitalGame:
         with self.recursos_lock:
             if self.dinheiro >= 300:
                 self.dinheiro -= 300
-                self.enfermeiros = Semaphore(self.enfermeiros._value + 1)
+                self.enfermeiros = Semaphore(self.enfermeiros._value + 1) # !!!!
                 print("\n✅ Enfermeiro contratado!")
             else:
                 print("\n❌ Dinheiro insuficiente!")
